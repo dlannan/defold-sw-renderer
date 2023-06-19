@@ -1,0 +1,7 @@
+mesh: "/builtins/assets/meshes/quad.dae"
+material: "/assets/shaders/model.material"
+textures: "/assets/images/temp.png"
+skeleton: ""
+animations: ""
+default_animation: ""
+name: "unnamed"

@@ -1,0 +1,51 @@
+
+local imageutils = require("gltfloader.image-utils")
+
+rendertex = nil
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("@render:", "use_camera_projection")
+	msg.post("camera", "acquire_camera_focus")
+
+	-- rotate the cube
+	--go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_INOUTQUAD, 6)
+	--go.animate(".", "euler.x", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_INOUTQUAD, 9)
+	--go.animate(".", "euler.y", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_INOUTQUAD, 12)
+
+	-- tint the cube and the sphere
+	go.set("#cube", "tint", vmath.vector4(1,1,0,1))
+	go.set("#quad", "tint", vmath.vector4(1,1,1,1))
+	go.set("#sphere", "tint", vmath.vector4(1,0,1,1))
+	
+	-- position directional light
+	self.light = vmath.vector4(0, 0, go.get_position().z + 1, 0)
+	go.set("#cube", "light", self.light)
+	go.set("#quad", "light", self.light)
+	go.set("#sphere", "light", self.light)
+
+	local texres = 512
+	rendertex = imageutils.bufferresource("#quad", texres, "texture0", "rgb", 255)
+	local application_path = "./assets/models/"
+	renderer.settestscene("ponycar", "ponycar/ponycar.scn", application_path)
+	local width, height = window.get_size()
+	renderer.initrenderloop( texres, texres )
+end
+
+function update(self, dt)
+	renderer.updaterenderloop();
+	renderer.setframebuffer(rendertex.image_buffer, "rgb");
+end
+
+function on_input(self, action_id, action)
+	-- move directional light based on input
+	self.light.x = 2 * ((action.x - 480) / 480)
+	self.light.y = 2 * ((action.y - 320) / 320)
+	go.set("#cube", "light", self.light)
+	go.set("#quad", "light", self.light)
+	go.set("#sphere", "light", self.light)
+end
+
+function final(self)
+	renderer.releaserenderloop()
+end
