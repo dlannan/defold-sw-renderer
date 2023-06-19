@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------------------------
 local imageutils = {}
-
+local ffi = package.preload.ffi()  
 -------------------------------------------------------------------------------------------------
 
 function loadimage(goname, imagefilepath, tid )
@@ -103,11 +103,13 @@ function bufferresource( goname, size, tid, restype, init )
 
 	local buffsize = res.width * res.height * rgbcount
 	-- res.buffer = string.rep(string.char(init), buffsize)
+	local strmem = ffi.new("unsigned char[?]", buffsize+1, 0xff)
+	res.buffer = ffi.string(strmem, buffsize+1)
 	
 	local buff = buffer.create(res.width * res.height, { 
 		{	name=hash(res.type), type=buffer.VALUE_TYPE_UINT8, count=rgbcount } 
 	})
-	--geomextension.setbufferbytes( buff, res.type, res.buffer )
+	geomextension.setbufferbytes( buff, res.type, res.buffer )
 
 	res.type=resource.TEXTURE_TYPE_2D	
 	res.num_mip_maps=1
@@ -115,7 +117,7 @@ function bufferresource( goname, size, tid, restype, init )
 	local resource_path = go.get(goname, tid)
 
 	-- Store the resource path so it can be used later 
-	if(res.resourcepath) then res.resource_path = resource_path end
+	res.resource_path = resource_path 
 	res.image_buffer = buff 
 
 	resource.set_texture( resource_path, res, buff )

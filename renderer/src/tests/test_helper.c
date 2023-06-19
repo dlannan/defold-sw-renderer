@@ -384,7 +384,11 @@ scene_t *test_create_scene(const char *scene_name, const char *scene_filename, c
     scene_t *scene = NULL;
     cache_set_path(asset_path);
 
-    mat4_t root = mat4_scale(1.f, 1.f, 1.f);
+    mat4_t translation = mat4_translate(-10.343f, -13.252f, -186.343f);
+    mat4_t rotation = mat4_rotate_x(TO_RADIANS(-90);
+    mat4_t scale = mat4_scale(0.0015f, 0.0015f, 0.0015f);
+    mat4_t root = mat4_mul_mat4(scale, mat4_mul_mat4(rotation, translation));
+        
     scene = scene_from_file(scene_filename, root);
     if (scene) {
         int num_faces = count_num_faces(scene);

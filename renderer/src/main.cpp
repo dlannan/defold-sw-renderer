@@ -95,11 +95,16 @@ static int SetFrameBufferBytes(lua_State* L)
     if (r == dmBuffer::RESULT_OK) {
         for (int i = 0; i < count; ++i)
         {
-            for (int c = 0; c < components; ++c)
-            {
-                bytes[c] = 0xff;//fb[idx++];
-            }
+            // for (int c = 0; c < components; ++c)
+            // {
+            //     bytes[c] = fb[idx++];
+            // }
+            bytes[0] = fb[idx]; 
+            bytes[1] = fb[idx+1]; 
+            bytes[2] = fb[idx+2]; 
+            bytes[3] = 0xff;
             bytes += stride;
+            idx += stride;
         }
     } else {
         // handle error
