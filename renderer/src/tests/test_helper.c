@@ -174,81 +174,7 @@ static vec3_t get_light_dir(record_t *record) {
     return vec3_new(-x, -y, -z);
 }
 
-// void test_enter_mainloop(tickfunc_t *tickfunc, void *userdata) {
-//     window_t *window;
-//     framebuffer_t *framebuffer;
-//     camera_t *camera;
-//     record_t record;
-//     context_t context;
-//     float aspect;
-//     float prev_time;
-//     float print_time;
-//     int num_frames;
-// 
-//     window = window_create(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT);
-//     framebuffer = framebuffer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
-//     aspect = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
-//     camera = camera_create(CAMERA_POSITION, CAMERA_TARGET, aspect);
-// 
-//     memset(&record, 0, sizeof(record_t));
-//     record.light_theta = LIGHT_THETA;
-//     record.light_phi = LIGHT_PHI;
-// 
-//     memset(&context, 0, sizeof(context_t));
-//     context.framebuffer = framebuffer;
-//     context.camera = camera;
-// 
-//     window_set_userdata(window, &record);
-//     input_set_callbacks(window, callbacks);
-// 
-//     num_frames = 0;
-//     prev_time = platform_get_time();
-//     print_time = prev_time;
-//     while (!window_should_close(window)) {
-//         float curr_time = platform_get_time();
-//         float delta_time = curr_time - prev_time;
-// 
-//         update_camera(window, camera, &record);
-//         update_light(window, delta_time, &record);
-//         update_click(curr_time, &record);
-// 
-//         context.light_dir = get_light_dir(&record);
-//         context.click_pos = record.click_pos;
-//         context.single_click = record.single_click;
-//         context.double_click = record.double_click;
-//         context.frame_time = curr_time;
-//         context.delta_time = delta_time;
-//         tickfunc(&context, userdata);
-// 
-//         window_draw_buffer(window, framebuffer);
-//         num_frames += 1;
-//         if (curr_time - print_time >= 1) {
-//             int sum_millis = (int)((curr_time - print_time) * 1000);
-//             int avg_millis = sum_millis / num_frames;
-//             printf("fps: %3d, avg: %3d ms\n", num_frames, avg_millis);
-//             num_frames = 0;
-//             print_time = curr_time;
-//         }
-//         prev_time = curr_time;
-// 
-//         record.orbit_delta = vec2_new(0, 0);
-//         record.pan_delta = vec2_new(0, 0);
-//         record.dolly_delta = 0;
-//         record.single_click = 0;
-//         record.double_click = 0;
-// 
-//         input_poll_events();
-//     }
-// 
-//     window_destroy(window);
-//     framebuffer_release(framebuffer);
-//     camera_release(camera);
-// }
 
-// Draw the framebuffer to a texture target
-void draw_framebuffer_to_texture( framebuffer_t *buffer )
-{
-}
 
 scene_info_t test_init_mainloop( int width, int height ) {
 
@@ -272,13 +198,21 @@ scene_info_t test_init_mainloop( int width, int height ) {
     return info;
 }
 
-void test_run_mainloop(scene_info_t info, tickfunc_t *tickfunc, userdata_t *userdata) {
+void test_update_camera(scene_info_t &info, vec3_t pos, vec3_t target) {
+    camera_set_transform(info.camera, pos, target);
+}
+
+void test_update_light(scene_info_t &info, float theta, float phi) {
+
+    info.record.light_theta = theta;
+    info.record.light_phi = phi;
+}
+
+void test_run_mainloop(scene_info_t &info, tickfunc_t *tickfunc, userdata_t *userdata) {
 
         float curr_time = (float)(dmTime::GetTime()*0.001f);
         float delta_time = curr_time - info.prev_time;
 
-        update_camera(info.camera, &info.record);
-        update_light(delta_time, &info.record);
         // update_click(curr_time, &record);
 
         info.context.light_dir = get_light_dir(&info.record);
@@ -290,7 +224,6 @@ void test_run_mainloop(scene_info_t info, tickfunc_t *tickfunc, userdata_t *user
         tickfunc(&info.context, userdata);
 
         //window_draw_buffer(window, framebuffer);
-        draw_framebuffer_to_texture(info.framebuffer);
         
         info.num_frames += 1;
         if (curr_time - info.print_time >= 1) {
@@ -311,7 +244,7 @@ void test_run_mainloop(scene_info_t info, tickfunc_t *tickfunc, userdata_t *user
         // input_poll_events();
 }
 
-void test_release_mainloop(scene_info_t info)
+void test_release_mainloop(scene_info_t &info)
 {
     framebuffer_release(info.framebuffer);
     camera_release(info.camera);
@@ -385,8 +318,8 @@ scene_t *test_create_scene(const char *scene_name, const char *scene_filename, c
     cache_set_path(asset_path);
 
     mat4_t translation = mat4_translate(-10.343f, -13.252f, -186.343f);
-    mat4_t rotation = mat4_rotate_x(TO_RADIANS(-90);
-    mat4_t scale = mat4_scale(0.0015f, 0.0015f, 0.0015f);
+    mat4_t rotation = mat4_rotate_x(TO_RADIANS(-90));
+    mat4_t scale = mat4_scale(0.001f, 0.001f, 0.001f);
     mat4_t root = mat4_mul_mat4(scale, mat4_mul_mat4(rotation, translation));
         
     scene = scene_from_file(scene_filename, root);

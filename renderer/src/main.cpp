@@ -29,6 +29,18 @@ static tickfunc_t       * tickfunc = &tick_function;
 
 extern texture_t *acquire_label_texture(const char *filename);
 
+static void GetTableNumbersFloat( lua_State * L, int tblidx, float *data )
+{
+    // Iterate indices and set float buffer with correct lookups
+    lua_pushnil(L);
+    size_t idx = 0;
+    // Build a number array matching the buffer. They are all assumed to be type float (for the time being)
+    while( lua_next( L, tblidx ) != 0) {
+        data[idx++] = lua_tonumber( L, -1 );
+        lua_pop( L, 1 );
+    }
+}
+
 static int SetTestScene(lua_State* L)
 {
     DM_LUA_STACK_CHECK(L, 0);
@@ -76,6 +88,33 @@ static int UpdateRenderLoop(lua_State* L)
     return 0;
 }
 
+static int UpdateCamera(lua_State *L)
+{
+    DM_LUA_STACK_CHECK(L, 0);
+
+    luaL_checktype(L, 1, LUA_TTABLE);
+    luaL_checktype(L, 2, LUA_TTABLE);
+
+    vec3_t pos;
+    GetTableNumbersFloat(L, 1, (float *)&pos);
+
+    vec3_t target;
+    GetTableNumbersFloat(L, 2, (float *)&target);
+        
+    test_update_camera(sceneinfo, pos, target);
+    return 0;
+}
+
+static int UpdateLight(lua_State *L)
+{
+    DM_LUA_STACK_CHECK(L, 0);
+    float theta = luaL_checknumber(L, 1);
+    float phi = luaL_checknumber(L, 2);
+        
+    test_update_light(sceneinfo, theta, phi); 
+    return 0;
+}
+
 // Fetch frame buffer and set it to the texture in use
 static int SetFrameBufferBytes(lua_State* L)
 {
@@ -120,6 +159,8 @@ static const luaL_reg Module_methods[] =
     {"settestscene", SetTestScene},
     {"initrenderloop", InitRenderLoop},
     {"releaserenderloop", ReleaseRenderLoop},
+    {"updatecamera", UpdateCamera},
+    {"updatelight", UpdateLight},
     {"updaterenderloop", UpdateRenderLoop},
     {"setframebuffer", SetFrameBufferBytes},
     {0, 0}
