@@ -51,7 +51,10 @@ void private_blit_rgb(framebuffer_t *src, image_t *dst) {
 
 /* misc functions */
 
-const char *private_get_extension(const char *filename) {
-    const char *dot_pos = strrchr(filename, '.');
-    return dot_pos == NULL ? "" : dot_pos + 1;
+const char *private_get_extension(const char *filename, int len) {
+    int strsize = strlen(filename);
+    if(filename[strsize - len - 1] == '.')
+        return filename + (strsize - len );
+    else
+        return "";
 }

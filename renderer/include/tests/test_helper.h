@@ -11,6 +11,7 @@ scene_t *test_create_scene(const char *scene_name, const char *scene_filename, c
 perframe_t test_build_perframe(scene_t *scene, context_t *context);
 void test_draw_scene(scene_t *scene, framebuffer_t *framebuffer, perframe_t *perframe);
 
+void set_matrix_root( vec3_t pos, vec3_t rot, vec3_t scale );
 scene_info_t test_init_mainloop( int width, int height );
 
 void test_update_camera(scene_info_t &info, vec3_t pos, vec3_t target);

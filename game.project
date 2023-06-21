@@ -8,6 +8,8 @@ shared_state = 1
 [display]
 width = 960
 height = 640
+vsync = 0
+display_device_info = 1
 
 [android]
 input_method = HiddenInputField

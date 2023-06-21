@@ -165,7 +165,7 @@ static mesh_t *load_obj(const char *filename) {
 }
 
 mesh_t *mesh_load(const char *filename) {
-    const char *extension = private_get_extension(filename);
+    const char *extension = private_get_extension(filename, 3);
     if (strcmp(extension, "obj") == 0) {
         return load_obj(filename);
     } else {

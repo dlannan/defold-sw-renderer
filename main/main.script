@@ -26,16 +26,20 @@ function init(self)
 
 	
 	self.angle = 0.0
-	local texres = 512
+	local texres = 2160
+	local tilt = math.pi * 0.5
+	renderer.setmatrixroot( {0, 0, 0}, {tilt, 0, 0}, {0.2, 0.2, 0.2} )
 	self.rendertex = imageutils.bufferresource("/quad#quad", texres, "texture0", "rgba", 255)
 	local application_path = "./assets/models/"
-	renderer.settestscene("ponycar", "ponycar/ponycar.scn", application_path)
+	renderer.settestscene("helmet", "helmet/helmet.scn", application_path)
 	local width, height = window.get_size()
 	renderer.initrenderloop( texres, texres )
 end
 
 function update(self, dt)
 
+	resource.set_texture( self.rendertex.resource_path, self.rendertex, self.rendertex.image_buffer )
+	
 	local target = { 0.0, 0.0, 0.0 }
 	self.angle = self.angle + 0.1 * dt
 	if self.angle > math.pi * 2.0 then self.angle = 0.0 end
@@ -49,7 +53,6 @@ function update(self, dt)
 		
 	renderer.updaterenderloop()
 	renderer.setframebuffer(self.rendertex.image_buffer, "rgba");
-	resource.set_texture( self.rendertex.resource_path, self.rendertex, self.rendertex.image_buffer )
 end
 
 function on_input(self, action_id, action)

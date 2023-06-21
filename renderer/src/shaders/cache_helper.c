@@ -37,9 +37,9 @@ const char *cache_get_path()
 
 const char *get_pathfilename(const char *filename)
 {
-    std::string fullpath = asset_path;
+    static std::string fullpath = cache_get_path();
     fullpath += filename;
-    printf("filepath: %s\n", fullpath.c_str());
+    //printf("filepath: %s\n", fullpath.c_str());
     return fullpath.c_str();
 }
 

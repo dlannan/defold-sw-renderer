@@ -26,6 +26,8 @@ static const float LIGHT_SPEED = PI;
 
 static const float CLICK_DELAY = 0.25f;
 
+static mat4_t mat_root;
+
 typedef int button_t;
 
 enum {
@@ -55,6 +57,16 @@ static vec2_t get_cursor_pos() {
 static bool input_key_pressed( int key ) 
 {
     return false;
+}
+
+void set_matrix_root( vec3_t pos, vec3_t rot, vec3_t scale )
+{
+    mat4_t translation = mat4_translate(pos.x, pos.y, pos.z);
+    mat4_t rotation = mat4_rotate_x(rot.x);
+    rotation = mat4_mul_mat4( rotation, mat4_rotate_y(rot.y) );
+    rotation = mat4_mul_mat4( rotation, mat4_rotate_z(rot.z) );
+    mat4_t mscale = mat4_scale(scale.x, scale.y, scale.z);
+    mat_root  = mat4_mul_mat4(mscale, mat4_mul_mat4(rotation, translation));
 }
 
 static record_t temprecord;
@@ -317,12 +329,7 @@ scene_t *test_create_scene(const char *scene_name, const char *scene_filename, c
     scene_t *scene = NULL;
     cache_set_path(asset_path);
 
-    mat4_t translation = mat4_translate(-10.343f, -13.252f, -186.343f);
-    mat4_t rotation = mat4_rotate_x(TO_RADIANS(-90));
-    mat4_t scale = mat4_scale(0.001f, 0.001f, 0.001f);
-    mat4_t root = mat4_mul_mat4(scale, mat4_mul_mat4(rotation, translation));
-        
-    scene = scene_from_file(scene_filename, root);
+    scene = scene_from_file(scene_filename, mat_root);
     if (scene) {
         int num_faces = count_num_faces(scene);
         bbox_t bbox = get_scene_bbox(scene);

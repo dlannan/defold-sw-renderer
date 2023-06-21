@@ -202,7 +202,7 @@ static skeleton_t *load_ani(const char *filename) {
 
 skeleton_t *skeleton_load(const char *in_filename) {
     const char * filename = get_pathfilename(in_filename);
-    const char *extension = private_get_extension(filename);
+    const char *extension = private_get_extension(in_filename,3);
     if (strcmp(extension, "ani") == 0) {
         return load_ani(filename);
     } else {

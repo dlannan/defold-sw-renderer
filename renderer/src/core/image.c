@@ -50,7 +50,7 @@ static image_t *load_tga_image(const char *filename);
 static image_t *load_hdr_image(const char *filename);
 
 image_t *image_load(const char *filename) {
-    const char *extension = private_get_extension(filename);
+    const char *extension = private_get_extension(filename, 3);
     if (strcmp(extension, "tga") == 0) {
         return load_tga_image(filename);
     } else if (strcmp(extension, "hdr") == 0) {
@@ -65,7 +65,7 @@ static void save_tga_image(image_t *image, const char *filename);
 static void save_hdr_image(image_t *image, const char *filename);
 
 void image_save(image_t *image, const char *filename) {
-    const char *extension = private_get_extension(filename);
+    const char *extension = private_get_extension(filename, 3);
     if (strcmp(extension, "tga") == 0) {
         save_tga_image(image, filename);
     } else if (strcmp(extension, "hdr") == 0) {

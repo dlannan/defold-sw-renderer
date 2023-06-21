@@ -51,6 +51,27 @@ static int SetTestScene(lua_State* L)
     return 0;
 }
 
+static int SetMatrixRoot(lua_State*L)
+{
+    DM_LUA_STACK_CHECK(L, 0);
+
+    luaL_checktype(L, 1, LUA_TTABLE);
+    luaL_checktype(L, 2, LUA_TTABLE);
+    luaL_checktype(L, 3, LUA_TTABLE);
+
+    vec3_t pos;
+    GetTableNumbersFloat(L, 1, (float *)&pos);
+
+    vec3_t rot;
+    GetTableNumbersFloat(L, 2, (float *)&rot);
+    
+    vec3_t scale;
+    GetTableNumbersFloat(L, 3, (float *)&scale);
+    
+    set_matrix_root(pos, rot, scale);
+    return 0;
+}
+
 static int InitRenderLoop(lua_State* L)
 {
     DM_LUA_STACK_CHECK(L, 0);
@@ -157,6 +178,7 @@ static int SetFrameBufferBytes(lua_State* L)
 static const luaL_reg Module_methods[] =
 {
     {"settestscene", SetTestScene},
+    {"setmatrixroot", SetMatrixRoot},
     {"initrenderloop", InitRenderLoop},
     {"releaserenderloop", ReleaseRenderLoop},
     {"updatecamera", UpdateCamera},
